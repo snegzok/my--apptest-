@@ -1,0 +1,24 @@
+name: Remote Deploy
+
+on:
+  push:
+    branches: [ "main" ] # Сработает при пуше в основную ветку
+
+jobs:
+  test-ssh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            echo "Привет с виртуалки!"
+            docker --version
+            uptime
