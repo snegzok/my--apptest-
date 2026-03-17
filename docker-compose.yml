@@ -2,5 +2,5 @@ services:
   web:
     image: snegzok/my-app:latest # Замени snegzok на свой логин
     ports:
-      - "80:8080"
+      - "81:8080"
     restart: always
