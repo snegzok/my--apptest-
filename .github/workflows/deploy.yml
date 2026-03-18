@@ -5,9 +5,35 @@ on:
     branches: [ "main" ]
 
 jobs:
+name: Docker Build and Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # НОВЫЙ ЭТАП: Проверка кода
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install linter
+        run: pip install flake8
+
+      - name: Run flake8
+        # Проверяем синтаксические ошибки и неопределенные имена
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
   # ЭТАП 1: Сборка и отправка в Docker Hub
   build-and-push:
     runs-on: ubuntu-latest
+    needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,8 +49,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-app:v1.0.0
-
+          tags: |
+                ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
+                ${{ secrets.DOCKERHUB_USERNAME }}/my-app:v1.0.${{ github.run_number }}
   # ЭТАП 2: Команда на запуск через Compose на виртуалке
   deploy:
     runs-on: ubuntu-latest
