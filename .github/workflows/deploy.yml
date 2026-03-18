@@ -76,7 +76,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           # Бот сам напишет: "success", "failure" или "cancelled"
           message: |
-            📢 Статус пайплайна: ${{ needs.deploy.result || needs.build-and-push.result || needs.lint.result }}
-            🚀 Проект: ${{ github.repository }}
+            📢 Результат проверки: ${{ needs.lint.result }}
+            🚀 Сборка/Деплой: ${{ needs.deploy.result }}
+            📁 Проект: ${{ github.repository }}
             📝 Коммит: ${{ github.event.head_commit.message }}
-            👤 Автор: ${{ github.actor }}
