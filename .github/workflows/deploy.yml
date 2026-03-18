@@ -64,14 +64,19 @@ jobs:
             docker compose up -d --force-recreate
   notify:
     runs-on: ubuntu-latest
-    needs: deploy
+    # Теперь мы ждем ЛЮБОЙ из этих этапов
+    needs: [lint, build-and-push, deploy]
+    # ЭТО ГЛАВНОЕ: выполнять всегда, даже если предыдущие шаги упали (failure)
+    if: always() 
     steps:
       - name: send telegram message
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          # Бот сам напишет: "success", "failure" или "cancelled"
           message: |
-            🚀 Деплой завершен!
-            ✅ Проект: ${{ github.repository }}
+            📢 Статус пайплайна: ${{ needs.deploy.result || needs.build-and-push.result || needs.lint.result }}
+            🚀 Проект: ${{ github.repository }}
             📝 Коммит: ${{ github.event.head_commit.message }}
+            👤 Автор: ${{ github.actor }}
