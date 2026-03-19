@@ -1,6 +1,16 @@
 services:
   web:
-    image: snegzok/my-app:latest # Замени snegzok на свой логин
-    ports:
-      - "81:8080"
-    restart: always
+    image: snegzok/my-app:latest
+    # Мы УДАЛИЛИ строку ports: "81:8080", теперь за это отвечает Traefik
+    networks:
+      - web  # Та самая сеть, которая была в конфиге Traefik
+    labels:
+      - "traefik.enable=true"
+      # Если у тебя есть домен, напиши его вместо IP
+      - "traefik.http.routers.myapp.rule=Host(`app.expert-only.ru`)"
+      - "traefik.http.routers.myapp.entrypoints=web"
+      - "traefik.http.services.myapp.loadbalancer.server.port=8080"
+
+networks:
+  web:
+    external: true
