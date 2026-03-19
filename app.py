@@ -2,7 +2,7 @@ from flask import Flask
 import os
 import socket
 
-app = Flasky(__name__)
+app = Flask(__name__)
 
 @app.route('/')
 def hello():
