@@ -6,9 +6,11 @@ services:
       - web  # Та самая сеть, которая была в конфиге Traefik
     labels:
       - "traefik.enable=true"
-      # Если у тебя есть домен, напиши его вместо IP
       - "traefik.http.routers.myapp.rule=Host(`app.expert-only.ru`)"
-      - "traefik.http.routers.myapp.entrypoints=web"
+      # МЕНЯЕМ ТОЧКУ ВХОДА НА ЗАЩИЩЕННУЮ:
+      - "traefik.http.routers.myapp.entrypoints=websecure"
+      # ВКЛЮЧАЕМ SSL (используем резолвер из конфига Traefik):
+      - "traefik.http.routers.myapp.tls.certresolver=myresolver"
       - "traefik.http.services.myapp.loadbalancer.server.port=8080"
 
 networks:
